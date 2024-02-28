@@ -1,4 +1,4 @@
-# Mobile Shopping Application
+# MobiShop
 
 A mobile shopping application built on Flutter with a backend running on NodeJs, MySQL, Docker
 
@@ -15,12 +15,10 @@ samples, guidance on mobile development, and a full API reference.
 Git clone the repo and then.
 
 ```bash
-$ cd mobishop/backend
-
-# Edit the .env file
-
+$ cd mobishop
+$ cp .env.example .env
+# Edit the .env file with your own values
 $ docker compose up -d
-
 # Test the apis
 
 ```
