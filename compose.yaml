@@ -8,9 +8,9 @@ services:
       context: ./frontend
       dockerfile: frontend.dockerfile
     ports:
-      - 3000:3000
+      - $FRONTEND_LOCAL_PORT:$FRONTEND_DOCKER_PORT
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:4000
+      - NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
     restart: always
     env_file: ./.env
     depends_on:

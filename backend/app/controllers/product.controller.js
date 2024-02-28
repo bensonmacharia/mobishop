@@ -19,7 +19,7 @@ exports.addNewProduct = async (req, res) => {
         image: req.body.image
     };
 
-    // Save Tutorial in the database
+    // Save Product in the database
     await Product.create(product)
         .then(data => {
             res.send(data);
@@ -53,13 +53,13 @@ exports.getSingleProduct = async (req, res) => {
                 res.send(data);
             } else {
                 res.status(404).send({
-                    message: `Cannot find Tutorial with id=${id}.`
+                    message: `Cannot find Product with id=${id}.`
                 });
             }
         })
         .catch(err => {
             res.status(500).send({
-                message: "Error retrieving Tutorial with id=" + id
+                message: "Error retrieving Product with id=" + id
             });
         });
 };

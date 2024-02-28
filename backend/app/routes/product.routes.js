@@ -16,12 +16,12 @@ module.exports = function (app) {
     );
 
     app.get("/api/products",
-        [authJwt.verifyToken],
+        //[authJwt.verifyToken],
         controller.listProducts
     );
 
     app.get("/api/product/:id",
-        [authJwt.verifyToken],
+        //[authJwt.verifyToken],
         controller.getSingleProduct
     );
 };
