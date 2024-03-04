@@ -10,14 +10,16 @@ samples, guidance on mobile development, and a full API reference.
 
 ## Getting Set Up
 
-### Backend
+### Backend and Frontend
 
 Git clone the repo and then.
 
 ```bash
 $ cd mobishop
-$ cp .env.example .env
-# Edit the .env file with your own values
+$ cp .env.example .env # Edit the .env file with your own values
+$ cd frontend
+$ docker compose build
+$ cd ..
 $ docker compose up -d
 # Test the apis
 

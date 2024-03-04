@@ -10,7 +10,7 @@ const app = express();
 // cors
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods','GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   next();
 });
@@ -34,16 +34,23 @@ const db = require("./app/models");
 const Role = db.role;
 const Product = db.product;
 const User = db.user;
+const Category = db.category;
 
 db.product.belongsTo(db.user, {
   foreignKey: "userId",
   as: "user",
 });
 
+db.product.belongsTo(db.category, {
+  foreignKey: "categoryId",
+  as: "category",
+});
+
 db.sequelize.sync({ force: true }).then(() => {
   console.log('Drop and Resync Database with { force: true }');
   initialRoles();
   initialAdimUser();
+  initialProductCategoriess();
   initialProducts();
 });
 //db.sequelize.sync();
@@ -81,6 +88,34 @@ function initialRoles() {
   });
 }
 
+function initialProductCategoriess() {
+  Category.create({
+    icon: "FaMouse",
+    name: "Mouse",
+    class: "fa"
+  });
+  Category.create({
+    icon: "RiBatteryChargeFill",
+    name: "Adapters",
+    class: "ri"
+  });
+  Category.create({
+    icon: "MdOutlineCable",
+    name: "Cables",
+    class: "md"
+  });
+  Category.create({
+    icon: "FaRegKeyboard",
+    name: "Keyboards",
+    class: "f1"
+  });
+  Category.create({
+    icon: "MdSettingsInputComponent",
+    name: "Accessories",
+    class: "md"
+  });
+}
+
 function initialProducts() {
   Product.create({
     name: "Nike SuperRep 2",
@@ -88,7 +123,8 @@ function initialProducts() {
     quantity: 340,
     price: 350.00,
     image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80",
-    userId: 1
+    userId: 1,
+    categoryId: 2
   });
 
   Product.create({
@@ -97,7 +133,8 @@ function initialProducts() {
     quantity: 861,
     price: 250.00,
     image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1624&q=80",
-    userId: 1
+    userId: 1,
+    categoryId: 5
   });
 
   Product.create({
@@ -106,7 +143,8 @@ function initialProducts() {
     quantity: 119,
     price: 200.00,
     image: "https://images.unsplash.com/photo-1604671801908-6f0c6a092c05?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
-    userId: 1
+    userId: 1,
+    categoryId: 1
   });
 
   Product.create({
@@ -115,7 +153,8 @@ function initialProducts() {
     quantity: 84,
     price: 320.00,
     image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80",
-    userId: 1
+    userId: 1,
+    categoryId: 3
   });
 
   Product.create({
@@ -124,7 +163,8 @@ function initialProducts() {
     quantity: 757,
     price: 699.00,
     image: "https://images.unsplash.com/photo-1595341888016-a392ef81b7de?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1179&q=80",
-    userId: 1
+    userId: 1,
+    categoryId: 2
   });
 
   Product.create({
@@ -133,7 +173,8 @@ function initialProducts() {
     quantity: 120,
     price: 599.00,
     image: "https://images.unsplash.com/photo-1575537302964-96cd47c06b1b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
-    userId: 1
+    userId: 1,
+    categoryId: 2
   });
 
   Product.create({
@@ -142,7 +183,8 @@ function initialProducts() {
     quantity: 71,
     price: 499.00,
     image: "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1025&q=80",
-    userId: 1
+    userId: 1,
+    categoryId: 1
   });
 
   Product.create({
@@ -151,7 +193,8 @@ function initialProducts() {
     quantity: 63,
     price: 299.00,
     image: "https://images.unsplash.com/flagged/photo-1556637640-2c80d3201be8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
-    userId: 1
+    userId: 1,
+    categoryId: 3
   });
 
   Product.create({
@@ -160,7 +203,8 @@ function initialProducts() {
     quantity: 30,
     price: 499.00,
     image: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1112&q=80",
-    userId: 1
+    userId: 1,
+    categoryId: 2
   });
 
   Product.create({
@@ -169,7 +213,8 @@ function initialProducts() {
     quantity: 15,
     price: 399.00,
     image: "https://images.unsplash.com/photo-1515955656352-a1fa3ffcd111?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
-    userId: 1
+    userId: 1,
+    categoryId: 4
   });
 }
 
