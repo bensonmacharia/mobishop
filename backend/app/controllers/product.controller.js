@@ -1,8 +1,13 @@
 const db = require("../models");
+const { authJwt } = require("../middleware");
 const Product = db.product;
 const Category = db.category;
+const Image = db.image;
+
+const Op = db.Sequelize.Op;
 
 exports.addNewProduct = async (req, res) => {
+    //console.log(authJwt.getUserId(req));
     // Validate request
     if (!req.body.name) {
         res.status(400).send({
@@ -11,30 +16,45 @@ exports.addNewProduct = async (req, res) => {
         return;
     }
 
-    // Create a Product
-    const product = {
-        name: req.body.name,
-        description: req.body.description,
-        quantity: req.body.quantity,
-        price: req.body.price,
-        image: req.body.image
-    };
-
-    // Save Product in the database
-    await Product.create(product)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while adding the product."
-            });
+    try {
+        // Create a Product
+        const product = await Product.create({
+            name: req.body.name,
+            description: req.body.description,
+            quantity: req.body.quantity,
+            price: req.body.price,
+            userId: authJwt.getUserId(req),
+            categoryId: req.body.categoryId,
+            image: req.body.image
         });
+
+        // Create Images
+        if (req.body.images && req.body.images.length > 0) {
+            const images = await Promise.all(req.body.images.map(image => Image.create({ url: image.url })));
+            await product.setImages(images);
+        }
+
+        res.status(201).send({ message: "Product added successfully!" });
+
+    } catch (error) {
+        res.status(500).send({ message: error.message });
+    }
 };
 
 exports.listProducts = async (req, res) => {
-    await Product.findAll({ include: ["category"] })
+    await Product.findAll({
+        include: [
+            {
+                model: Category, as: 'category',
+                attributes: ['id', 'name']
+            },
+            {
+                model: Image, as: 'images',
+                attributes: ['id', 'url']
+            }
+        ],
+
+    })
         .then(data => {
             res.send(data);
         })
@@ -48,7 +68,18 @@ exports.listProducts = async (req, res) => {
 
 exports.getSingleProduct = async (req, res) => {
     const id = req.params.id;
-    await Product.findByPk(id, { include: ["category"] })
+    await Product.findByPk(id, {
+        include: [
+            {
+                model: Category, as: 'category',
+                attributes: ['id', 'name']
+            },
+            {
+                model: Image, as: 'images',
+                attributes: ['id', 'url']
+            }
+        ],
+    })
         .then(data => {
             if (data) {
                 res.send(data);
@@ -174,7 +205,18 @@ exports.getSingleCategory = async (req, res) => {
 
 exports.getCategoryProducts = async (req, res) => {
     const id = req.params.id;
-    await Product.findAll({ where: { categoryId: id }, include: ["category"] })
+    await Product.findAll({
+        where: { categoryId: id }, include: [
+            {
+                model: Category, as: 'category',
+                attributes: ['id', 'name']
+            },
+            {
+                model: Image, as: 'images',
+                attributes: ['id', 'url']
+            }
+        ],
+    })
         .then(data => {
             res.send(data);
         })

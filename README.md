@@ -16,9 +16,9 @@ Git clone the repo and then.
 
 ```bash
 $ cd mobishop
-$ cp .env.example .env # Edit the .env file with your own values
+$ cp .env.example .env # Edit the root folder .env file with your own values
 $ cd frontend
-$ docker compose build
+$ cp .env.example .env # Edit the frontend .env file with your own values
 $ cd ..
 $ docker compose up -d
 # Test the apis

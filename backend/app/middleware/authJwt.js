@@ -104,10 +104,27 @@ function getToken(req) {
   return null;
 }
 
+getUserId = (req) => {
+  let token = getToken(req);
+  user_id = 1;
+
+  jwt.verify(token,
+    config.secret,
+    (err, decoded) => {
+      if (err) {
+        user_id = 1;
+      }
+      user_id = decoded.id;
+    });
+
+  return user_id;
+};
+
 const authJwt = {
   verifyToken,
   isAdmin,
   isModerator,
   isModeratorOrAdmin,
+  getUserId
 };
 module.exports = authJwt;
