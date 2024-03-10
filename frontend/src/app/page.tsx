@@ -1,12 +1,15 @@
-import Hero from "@/components/Hero";
-import NewProducts from "@/components/NewProducts";
+import Categories from "@/components/Categories";
 import Contacts from "@/components/Contacts";
+import Products from "@/components/Products";
+import HeaderMain from "@/components/HeaderMain";
 
 export default function Home() {
   return (
     <main>
       {/* <Hero /> */}
-      <NewProducts />
+      <HeaderMain />
+      <Categories />
+      <Products />
       <Contacts />
     </main>
   );

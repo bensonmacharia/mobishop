@@ -46,7 +46,7 @@ export default Categories;
 
 const ProductType: React.FC<Category> = ({ id, name }) => {
   return (
-    <div className="flex justify-start items-center space-x-2 px-4 py-2 bg-gray-100 rounded-full font-semibold snap-start cursor-pointer hover:brightness-75 transition-all">
+    <div className="flex justify-start items-center space-x-2 px-4 py-2 bg-gray-100 rounded-full font-semibold snap-start cursor-pointer hover:brightness-75 hover:scale-105 transition-all">
       <GrCommand className="w-5 h-5" />
       <span>{name}</span>
     </div>

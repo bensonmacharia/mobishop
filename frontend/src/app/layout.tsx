@@ -2,9 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import HeaderTop from "@/components/HeaderTop";
-import HeaderMain from "@/components/HeaderMain";
-import Navbar from "@/components/Navbar";
-import Categories from "@/components/Categories";
 import Footer from "@/components/Footer";
 
 import "slick-carousel/slick/slick.css";
@@ -29,8 +26,6 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <HeaderTop />
-        <HeaderMain />
-        <Categories />
         {children}
         <Footer />
       </body>

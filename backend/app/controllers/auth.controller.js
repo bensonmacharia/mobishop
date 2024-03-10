@@ -45,12 +45,12 @@ exports.signin = async (req, res) => {
   try {
     const user = await User.findOne({
       where: {
-        username: req.body.username,
+        email: req.body.email,
       },
     });
 
     if (!user) {
-      return res.status(404).send({ message: "User Not found." });
+      return res.status(401).send({ message: "Wrong email or password!" });
     }
 
     const passwordIsValid = bcrypt.compareSync(
@@ -60,7 +60,7 @@ exports.signin = async (req, res) => {
 
     if (!passwordIsValid) {
       return res.status(401).send({
-        message: "Invalid Password!",
+        message: "Wrong email or password!",
       });
     }
 
@@ -70,12 +70,12 @@ exports.signin = async (req, res) => {
       authorities.push("ROLE_" + roles[i].name.toUpperCase());
     }
 
-    const token = jwt.sign({ id: user.id, username: user.username, roles: authorities },
+    const token = jwt.sign({ id: user.id, username: user.username, email: user.email, roles: authorities },
       config.secret,
       {
         algorithm: 'HS256',
         allowInsecureKeySizes: true,
-        expiresIn: 86400, // 24 hours
+        expiresIn: 3600, // 1 hour
       });
 
     req.session.token = token;

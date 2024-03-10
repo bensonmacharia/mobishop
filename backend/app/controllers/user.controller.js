@@ -1,3 +1,4 @@
+const { authJwt } = require("../middleware");
 const db = require("../models");
 const User = db.user;
 
@@ -13,7 +14,7 @@ exports.userProfile = async (req, res) => {
   try {
     const user = await User.findOne({
       where: {
-        id: req.userId,
+        id: authJwt.getUserId(req),
       },
     });
 

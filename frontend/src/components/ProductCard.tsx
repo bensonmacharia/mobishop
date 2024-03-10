@@ -1,106 +1,78 @@
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
-
-import { AiFillStar, AiOutlineStar } from "react-icons/ai";
+import { FaCartPlus } from "react-icons/fa";
+import type { Route } from "next";
 
 interface propsType {
-  img: string;
-  title: string;
-  desc: string;
-  rating: number;
-  price: string;
+  id: number;
+  images: {
+    id: number;
+    url: string;
+  }[];
+  name: string;
+  description: string;
+  price: number;
+  categoryId: number;
+  category: {
+    id: number;
+    name: string;
+  };
 }
 
 const ProductCard: React.FC<propsType> = ({
-  img,
-  title,
-  desc,
-  rating,
+  id,
+  images,
+  name,
+  description,
   price,
+  categoryId,
+  category,
 }) => {
-  const generateRating = (rating: number) => {
-    switch (rating) {
-      case 1:
-        return (
-          <div className="flex gap-1 text-[20px] text-[#FF9529]">
-            <AiFillStar />
-            <AiOutlineStar />
-            <AiOutlineStar />
-            <AiOutlineStar />
-            <AiOutlineStar />
-          </div>
-        );
-      case 2:
-        return (
-          <div className="flex gap-1 text-[20px] text-[#FF9529]">
-            <AiFillStar />
-            <AiFillStar />
-            <AiOutlineStar />
-            <AiOutlineStar />
-            <AiOutlineStar />
-          </div>
-        );
-      case 3:
-        return (
-          <div className="flex gap-1 text-[20px] text-[#FF9529]">
-            <AiFillStar />
-            <AiFillStar />
-            <AiFillStar />
-            <AiOutlineStar />
-            <AiOutlineStar />
-          </div>
-        );
-      case 4:
-        return (
-          <div className="flex gap-1 text-[20px] text-[#FF9529]">
-            <AiFillStar />
-            <AiFillStar />
-            <AiFillStar />
-            <AiFillStar />
-            <AiOutlineStar />
-          </div>
-        );
-      case 5:
-        return (
-          <div className="flex gap-1 text-[20px] text-[#FF9529]">
-            <AiFillStar />
-            <AiFillStar />
-            <AiFillStar />
-            <AiFillStar />
-            <AiFillStar />
-          </div>
-        );
 
-      default:
-        return null;
-    }
-  };
+  // const truncate = (input: string) =>
+  //   input?.length > 60 ? `${input.substring(0, 50)}...` : input;
+
+  // const desc = truncate(description);
 
   return (
-    <div className="px-4 border border-gray-200 rounded-xl max-w-[400px]">
-      <div>
-        <Image
-          className="w-full h-auto"
-          src={img}
-          width={200}
-          height={300}
-          alt={title}
-        />
-      </div>
+    <Link href={`/product/${id}`}>
+      <div className="px-4 border border-gray-200 rounded-xl max-w-[400px] hover:scale-105 hover:border-orange-200">
+        <div>
+          {images?.length > 0 && (
+            <Image
+              className="w-full h-auto"
+              key={images[0].id}
+              src={images[0].url}
+              width={200}
+              height={300}
+              alt={name}
+            />
+          )}
+        </div>
 
-      <div className="space-y-2 py-2">
-        <h2 className="text-accent font-medium uppercase">{title}</h2>
-        <p className="text-gray-500 max-w-[150px]">{desc}</p>
-        <div>{generateRating(rating)}</div>
+        <div className="space-y-2 py-2">
+          <h2 className="text-accent font-medium uppercase">{name}</h2>
+          <p className="text-gray-500 max-w-[150px]">
+            {category.name + " : " + name}
+          </p>
+          <div className="font-bold flex gap-4">
+            KES. {price}
+            <del className="text-gray-500 font-normal">
+              KES. {price + 0.2 * price}.00
+            </del>
+          </div>
 
-        <div className="font-bold flex gap-4">
-          ${price}
-          <del className="text-gray-500 font-normal">
-            ${parseInt(price) + 50}.00
-          </del>
+          <button
+            type="button"
+            className="w-full text-white bg-orange-300 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-full text-sm px-10 py-2.5 text-center inline-flex items-center me-2 dark:bg-orange-400 dark:hover:bg-orange-600 dark:focus:ring-orange-600"
+          >
+            <FaCartPlus className="w-5 h-5 me-2" />
+            Order now
+          </button>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

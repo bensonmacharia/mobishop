@@ -4,8 +4,8 @@ const db = require("../models");
 const User = db.user;
 
 verifyToken = (req, res, next) => {
-  //let token = req.session.token;
-  let token = getToken(req);
+  let token = req.session.token || req.cookies['mobiapp-session'] || getToken(req);
+  //let token = getToken(req);
   //console.log(token1);
 
   if (!token) {
@@ -105,14 +105,15 @@ function getToken(req) {
 }
 
 getUserId = (req) => {
-  let token = getToken(req);
-  user_id = 1;
+  //let token = getToken(req);
+  let token = req.session.token || req.cookies['mobiapp-session'] || getToken(req);
+  user_id = 0;
 
   jwt.verify(token,
     config.secret,
     (err, decoded) => {
       if (err) {
-        user_id = 1;
+        user_id = 0;
       }
       user_id = decoded.id;
     });

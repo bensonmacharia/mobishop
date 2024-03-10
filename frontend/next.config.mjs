@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    output: `standalone`
+    output: `standalone`,
+    images: {
+        domains: ['images.unsplash.com', 'zicco.co.ke']
+    }
 };
 
 export default nextConfig;

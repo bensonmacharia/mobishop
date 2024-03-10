@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require('cookie-parser');
 const cookieSession = require("cookie-session");
 require('dotenv').config();
 const bcrypt = require("bcryptjs");
@@ -7,9 +8,17 @@ const controller = require("./app/controllers/auth.controller");
 
 const app = express();
 
+var corsOptions = {
+  credentials: true,
+  origin: process.env.CORS_ORIGIN
+};
+
 // cors
+app.use(cors(corsOptions));
+
+app.use(cookieParser());
+
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   next();
