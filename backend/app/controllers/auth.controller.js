@@ -70,7 +70,7 @@ exports.signin = async (req, res) => {
       authorities.push("ROLE_" + roles[i].name.toUpperCase());
     }
 
-    const token = jwt.sign({ id: user.id, username: user.username, email: user.email, roles: authorities },
+    const token = jwt.sign({ id: user.id, username: user.username, fname: user.fname, lname: user.lname, email: user.email, roles: authorities },
       config.secret,
       {
         algorithm: 'HS256',

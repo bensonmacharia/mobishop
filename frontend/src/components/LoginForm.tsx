@@ -2,8 +2,8 @@
 import { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { setCookie } from "cookies-next";
+import Image from "next/image";
 
 export const LoginForm = () => {
   const router = useRouter();
@@ -26,41 +26,58 @@ export const LoginForm = () => {
 
     try {
       setLoading(true);
-      const response = await axios.post(`${apiUrl}/api/auth/signin`, user);
-      //console.log(response.data);
-      // Set the cookie
-      setCookie("mobiapp-session", response.data.token, {
-        path: "/",
-        maxAge: 3600,
-        sameSite: true,
-        secure: true,
+      //const response = await axios.post(`${apiUrl}/api/auth/signin`, user);
+      const response = await fetch(`${apiUrl}/api/auth/signin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
       });
-      //console.log("Cookie: " + getCookie("mobi-session"));
-      router.push("/");
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message);
+      } else {
+        // Set the cookie
+        setCookie("mobiapp-session", data.token as string, {
+          path: "/",
+          maxAge: 3600,
+          sameSite: true,
+          secure: true,
+        });
+
+        // Redirect to home page
+        router.push("/admin");
+      }
     } catch (error: any) {
       console.log("Login failed. ", error.message);
       setError("Login failed. Try again");
     } finally {
       setLoading(false);
     }
-
-    // const response = await fetch("/api/auth/login", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({ email, password }),
-    // });
-
-    // if (response.ok) {
-    //   router.push("/profile");
-    // } else {
-    //   // Handle errors
-    // }
   }
 
   return (
     <>
       <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-700 dark:border-gray-700">
         <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Image
+              className="mt-5 mb-7"
+              width={176}
+              height={32}
+              src={"/images/logo/logo-dark.png"}
+              alt="Logo"
+              priority
+            />
+          </div>
           <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
             Sign in to your account
           </h1>
@@ -116,7 +133,7 @@ export const LoginForm = () => {
               Sign in
             </button>
           </form>
-          <p className="text-primary w-full bg-gray-600 rounded-full px-5">
+          <p className="text-error w-full bg-gray-600 rounded-full px-5 font-satoshi font-medium">
             {error}
           </p>
         </div>

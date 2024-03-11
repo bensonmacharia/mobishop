@@ -10,8 +10,13 @@ const HeaderMain = () => {
       <div className="container sm:flex justify-between items-center">
         <Link href={`/`}>
           <div className="font-bold text-4xl text-center pb-4 sm:pb-0 text-blackish">
-            {/* <Image src="/zicco-logo.png" alt="Zicco" width={100} height={100} /> */}
-            <span className="text-accent">Zicco TECH</span>
+            <Image
+              src="/images/logo/logo-dark.png"
+              alt="Zicco"
+              width={176}
+              height={32}
+            />
+            {/* <span className="text-accent">Zicco TECH</span> */}
           </div>
         </Link>
 

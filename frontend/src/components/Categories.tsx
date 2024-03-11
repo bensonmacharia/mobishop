@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
 import { GrCommand } from "react-icons/gr";
 
 interface Category {
@@ -15,18 +14,28 @@ const Categories = () => {
   const initialCategories = useRef<Category[]>([defaultCategory]);
 
   //fetch categories
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/api/categories`);
-        setCategories([...initialCategories.current, ...response.data]);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await axios.get(`${apiUrl}/api/categories`);
+  //       setCategories([...initialCategories.current, ...response.data]);
+  //     } catch (error) {
+  //       console.error("Error fetching categories:", error);
+  //     }
+  //   };
 
-    fetchData();
+  //   fetchData();
+  // }, []);
+
+  useEffect(() => {
+    fetch(`${apiUrl}/api/categories`)
+      .then((response) => response.json())
+      .then((json) => setCategories([...initialCategories.current, ...json]));
   }, []);
+
+  if (!categories) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="sm:block">

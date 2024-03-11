@@ -37,20 +37,11 @@ const HeaderTop = () => {
           </div>
 
           <div className="flex justify-end items-center space-x-2 bg-gray-100 p-2 rounded-full">
-            {!token && (
-              <Link href={`/user/login`}>
-                <NavIcon>
-                  <BiUser className="w-6 h-6" />
-                </NavIcon>
-              </Link>
-            )}
-            {token && (
-              <Link href={`/admin`}>
-                <NavIcon>
-                  <BiUser className="w-6 h-6" />
-                </NavIcon>
-              </Link>
-            )}
+            <Link href={`/admin`}>
+              <NavIcon>
+                <BiUser className="w-6 h-6" />
+              </NavIcon>
+            </Link>
             <NavIcon>
               <HiOutlineShoppingBag className="w-6 h-6" />
             </NavIcon>

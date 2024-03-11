@@ -26,7 +26,7 @@ const config: Config = {
       colors: {
         accent: "#0CAFFF",
         blackish: "#1b1b1b",
-        // primary: "#E6720E",
+        error: "#E6720E",
         current: "currentColor",
         transparent: "transparent",
         white: "#FFFFFF",
