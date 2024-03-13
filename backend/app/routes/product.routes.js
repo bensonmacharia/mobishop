@@ -32,6 +32,11 @@ module.exports = function (app) {
         controller.addNewProductCategory
     );
 
+    app.put("/api/category/:name",
+        [authJwt.verifyToken],
+        controller.updateProductCategory
+    );
+
     app.get("/api/categories",
         controller.listProductCategories
     );

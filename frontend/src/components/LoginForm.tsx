@@ -49,7 +49,7 @@ export const LoginForm = () => {
         });
 
         // Redirect to home page
-        router.push("/admin");
+        router.push("/admin/dashboard");
       }
     } catch (error: any) {
       console.log("Login failed. ", error.message);

@@ -1,7 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Carousel from "@/components/Carousel";
 import { FaCartPlus, FaWhatsapp } from "react-icons/fa";
 
@@ -34,18 +33,27 @@ export default function Product() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get<Product>(
-          `${apiUrl}/api/product/${id}`,
-          { withCredentials: true }
-        );
-        setProduct(response.data);
+        const response = await fetch(`${apiUrl}/api/product/${id}`, {
+          method: "GET",
+          credentials: "include", // Include cookies in the request
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        setProduct(data);
       } catch (error) {
         console.error("Error fetching product details:", error);
       }
     };
 
-    fetchData();
-  }, []);
+    if (id) {
+      fetchData();
+    }
+  }, [id]);
 
   if (!product) {
     return <div>Loading...</div>;

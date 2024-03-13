@@ -37,7 +37,7 @@ const HeaderTop = () => {
           </div>
 
           <div className="flex justify-end items-center space-x-2 bg-gray-100 p-2 rounded-full">
-            <Link href={`/admin`}>
+            <Link href={`/admin/dashboard`}>
               <NavIcon>
                 <BiUser className="w-6 h-6" />
               </NavIcon>

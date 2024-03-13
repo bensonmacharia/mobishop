@@ -5,6 +5,7 @@ const Category = db.category;
 const Image = db.image;
 
 const Op = db.Sequelize.Op;
+const sequelize = db.Sequelize;
 
 exports.addNewProduct = async (req, res) => {
     //console.log(authJwt.getUserId(req));
@@ -167,6 +168,40 @@ exports.addNewProductCategory = async (req, res) => {
             res.status(500).send({
                 message:
                     err.message || "Some error occurred while adding the category."
+            });
+        });
+};
+
+exports.updateProductCategory = async (req, res) => {
+    const name = req.params.name;
+    // Validate request
+    if (!name) {
+        res.status(400).send({
+            message: "Category name can not be empty!"
+        });
+        return;
+    }
+    await Category.update(req.body, {
+        where: sequelize.where(
+            sequelize.fn('lower', sequelize.col('name')),
+            sequelize.fn('lower', name)
+        )
+        //where: { name: { $iLike: name } }
+    })
+        .then(num => {
+            if (num == 1) {
+                res.send({
+                    message: "Product category was updated successfully."
+                });
+            } else {
+                res.send({
+                    message: `Cannot update product category with name=${name}.`
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Error updating product category with name=" + name
             });
         });
 };
