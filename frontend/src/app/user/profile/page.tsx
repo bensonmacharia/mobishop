@@ -33,7 +33,7 @@ const Profile = () => {
     };
 
     fetchUserProfile();
-  }, []);
+  }, [apiUrl]);
 
   if (!userProfile) {
     return <div>Loading...</div>;

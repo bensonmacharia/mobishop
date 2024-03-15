@@ -53,7 +53,7 @@ export default function Product() {
     if (id) {
       fetchData();
     }
-  }, [id]);
+  }, [id, apiUrl]);
 
   if (!product) {
     return <div>Loading...</div>;

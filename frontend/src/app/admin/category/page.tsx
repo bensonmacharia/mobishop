@@ -1,6 +1,7 @@
 "use client";
 import AdminLayout from "@/components/Admin/AdminLayout";
 import Breadcrumb from "@/components/Admin/Breadcrumbs/Breadcrumb";
+import Alert from "@/components/Admin/Alert";
 import React, { useState, useEffect } from "react";
 import { FiEdit } from "react-icons/fi";
 
@@ -10,23 +11,24 @@ interface Category {
 }
 
 const Category = () => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  let apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const [categories, setCategories] = useState<Category[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const [isErrorVisible, setIsErrorVisible] = useState(false);
+  const [isMessageModalVisible, setIsMessageModalVisible] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [categoryName, setCategoryName] = useState("");
   const [newCategoryName, setNewCategoryName] = useState("");
   const [message, setMessage] = useState("");
+  const [alertType, setAlertType] = useState("");
 
   useEffect(() => {
     fetch(`${apiUrl}/api/categories`)
       .then((response) => response.json())
       .then((json) => setCategories(json));
-  }, []);
+  }, [apiUrl]); // Include apiUrl in the dependency array
 
   const filteredCategories = categories.filter((category) =>
     category.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -55,6 +57,10 @@ const Category = () => {
     setIsModalOpen(true);
   };
 
+  const handleCloseModal = () => {
+    setIsMessageModalVisible(false);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -81,23 +87,26 @@ const Category = () => {
       if (response.ok) {
         // Close the modal and fetch the updated categories
         closeModal();
+        setIsMessageModalVisible(true);
+        setMessage("Category has been added/updated.");
+        setAlertType("normal");
         const json = await response.json();
         setCategories([...categories, json]);
         setCategoryName("");
         setNewCategoryName("");
-        console.log(json);
-        //setIsErrorVisible(true);
-        //setMessage("Category " + newCategoryName + " has been added.");
-        alert("Category added/updated");
       } else {
         console.error("Failed to add/update category");
-        //setIsErrorVisible(true);
-        alert("Failed to add/update category");
+        closeModal();
+        setIsMessageModalVisible(true);
+        setMessage("Failed to add/update category");
+        setAlertType("error");
       }
     } catch (error) {
       console.error("Failed to add/update category:", error);
-      //setIsErrorVisible(true);
-      alert("Failed to add/update category");
+      closeModal();
+      setIsMessageModalVisible(true);
+      setMessage("Failed to add/update category");
+      setAlertType("error");
     }
   };
 
@@ -112,11 +121,6 @@ const Category = () => {
           >
             + Add Category
           </button>
-          {isErrorVisible && (
-            <div className="flex m-2 bg-gray-200 p-2 rounded-md dark:bg-gray-800">
-              <p className="text-error font-satoshi font-semibold">{message}</p>
-            </div>
-          )}
           <div className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
             <div className="max-w-full overflow-x-auto">
               <div className="mb-4 flex justify-between items-center">
@@ -235,6 +239,15 @@ const Category = () => {
                 </div>
               </form>
             </div>
+          </div>
+        )}
+        {isMessageModalVisible && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <Alert
+              message={message}
+              onClose={handleCloseModal}
+              type={alertType}
+            />
           </div>
         )}
       </AdminLayout>

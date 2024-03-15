@@ -44,7 +44,7 @@ const Products = () => {
     fetch(`${apiUrl}/api/products`)
       .then((response) => response.json())
       .then((json) => setProducts(json));
-  }, []);
+  }, [apiUrl]);
 
   if (!products) {
     return <div>Loading...</div>;

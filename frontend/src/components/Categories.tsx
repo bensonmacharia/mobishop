@@ -31,7 +31,7 @@ const Categories = () => {
     fetch(`${apiUrl}/api/categories`)
       .then((response) => response.json())
       .then((json) => setCategories([...initialCategories.current, ...json]));
-  }, []);
+  }, [apiUrl]);
 
   if (!categories) {
     return <div>Loading...</div>;
