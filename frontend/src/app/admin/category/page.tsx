@@ -6,7 +6,8 @@ import React, { useState, useEffect } from "react";
 import { FiEdit } from "react-icons/fi";
 
 interface Category {
-  id: string;
+  id: number;
+  counter: number;
   name: string;
 }
 
@@ -23,12 +24,21 @@ const Category = () => {
   const [newCategoryName, setNewCategoryName] = useState("");
   const [message, setMessage] = useState("");
   const [alertType, setAlertType] = useState("");
+  const [reloadCategories, setReloadCategories] = useState<boolean>(false);
 
   useEffect(() => {
     fetch(`${apiUrl}/api/categories`)
       .then((response) => response.json())
-      .then((json) => setCategories(json));
-  }, [apiUrl]); // Include apiUrl in the dependency array
+      .then((json) => {
+        // Reverse the categories array and add a counter ID to each item
+        const reversedCategories = json
+          .reverse()
+          .map((category: Category, index: number) => {
+            return { ...category, counter: index + 1 };
+          });
+        setCategories(reversedCategories);
+      });
+  }, [apiUrl, reloadCategories]); // Include apiUrl in the dependency array
 
   const filteredCategories = categories.filter((category) =>
     category.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -54,6 +64,7 @@ const Category = () => {
 
   const handleEditCategory = (category: Category) => {
     setCategoryName(category.name);
+    setNewCategoryName(category.name);
     setIsModalOpen(true);
   };
 
@@ -61,9 +72,12 @@ const Category = () => {
     setIsMessageModalVisible(false);
   };
 
+  const handleReloadCategories = () => {
+    setReloadCategories((prev) => !prev); // Toggle reloadCategories
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     try {
       let url,
         method = "";
@@ -81,34 +95,41 @@ const Category = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: categoryName ? categoryName : newCategoryName,
+          name: newCategoryName,
         }),
       });
       if (response.ok) {
         // Close the modal and fetch the updated categories
         closeModal();
         setIsMessageModalVisible(true);
-        setMessage("Category has been added/updated.");
+        setMessage(
+          `Category ${categoryName ? categoryName : newCategoryName} has been added/updated.`
+        );
         setAlertType("normal");
         const json = await response.json();
-        setCategories([...categories, json]);
+        handleReloadCategories();
+        //setCategories([...categories, json]);
         setCategoryName("");
         setNewCategoryName("");
       } else {
         console.error("Failed to add/update category");
         closeModal();
         setIsMessageModalVisible(true);
-        setMessage("Failed to add/update category");
+        setMessage(
+          `Failed to add/update ${categoryName ? categoryName : newCategoryName} category`
+        );
         setAlertType("error");
       }
     } catch (error) {
       console.error("Failed to add/update category:", error);
       closeModal();
       setIsMessageModalVisible(true);
-      setMessage("Failed to add/update category");
+      setMessage(`Failed to add/update category: ${error}`);
       setAlertType("error");
     }
   };
+
+  console.log(categories);
 
   return (
     <>
@@ -121,8 +142,8 @@ const Category = () => {
           >
             + Add Category
           </button>
-          <div className="rounded-sm border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
-            <div className="max-w-full overflow-x-auto">
+          <div className="rounded-md border border-stroke bg-white px-5 pb-2.5 pt-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
+            <div className="max-w-full overflow-x-auto mb-5">
               <div className="mb-4 flex justify-between items-center">
                 <input
                   type="text"
@@ -132,34 +153,28 @@ const Category = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <table className="w-full table-auto">
-                <thead>
-                  <tr className="bg-gray-2 text-left dark:bg-meta-4">
-                    <th className="hidden sm:table-cell min-w-[220px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11">
+              <table className="w-full table-auto bg-white border-0">
+                <thead className="bg-gray-800 text-white">
+                  <tr className="text-left">
+                    <th className="hidden sm:table-cell min-w-[220px] px-4 py-4 font-medium">
                       ID
                     </th>
-                    <th className="min-w-[150px] px-4 py-4 font-medium text-black dark:text-white">
+                    <th className="min-w-[150px] px-4 py-4 font-medium">
                       Name
                     </th>
-                    <th className="px-4 py-4 font-medium text-black dark:text-white">
-                      Actions
-                    </th>
+                    <th className="px-4 py-4 font-medium">Actions</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="text-gray-700">
                   {currentItems.map((item, index) => (
-                    <tr key={index}>
-                      <td className="hidden sm:table-cell border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11">
-                        <h5 className="font-medium text-black dark:text-white">
-                          {item.id}
-                        </h5>
+                    <tr key={index} className="odd:bg-bodydark3 even:bg-white">
+                      <td className="hidden sm:table-cell border-b border-[#eee] px-4 py-5 pl-9 xl:pl-11">
+                        <h5 className="font-medium">{item.counter}</h5>
                       </td>
-                      <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
-                        <p className="text-black dark:text-white">
-                          {item.name}
-                        </p>
+                      <td className="border-b border-[#eee] px-4 py-5">
+                        <p>{item.name}</p>
                       </td>
-                      <td className="border-b border-[#eee] px-4 py-5 dark:border-strokedark">
+                      <td className="border-b border-[#eee] px-4 py-5">
                         <div className="flex items-center">
                           <button
                             className="hover:text-primary flex items-center justify-end bg-gray-200 p-2 rounded-lg dark:bg-gray-200 dark:text-black dark:hover:text-accent"
@@ -177,7 +192,7 @@ const Category = () => {
             </div>
           </div>
           {totalPages > 1 && (
-            <nav className="mt-4 flex justify-between items-center">
+            <nav className="mt-4 px-5 flex justify-between items-center">
               <div>
                 <span className="text-gray-500 text-sm">
                   Showing {indexOfFirstItem + 1}-{indexOfLastItem} of{" "}
@@ -214,12 +229,8 @@ const Category = () => {
                   type="text"
                   placeholder="Category Name"
                   className="w-full border border-gray-300 rounded-md px-3 py-2 mb-4"
-                  value={categoryName ? categoryName : newCategoryName}
-                  onChange={(e) =>
-                    categoryName
-                      ? setCategoryName(e.target.value)
-                      : setNewCategoryName(e.target.value)
-                  }
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
                   required
                 />
                 <div className="flex justify-end">

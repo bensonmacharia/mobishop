@@ -35,7 +35,7 @@ export default function Product() {
       try {
         const response = await fetch(`${apiUrl}/api/product/${id}`, {
           method: "GET",
-          credentials: "include", // Include cookies in the request
+          //credentials: "include", // Include cookies in the request
           headers: {
             "Content-Type": "application/json",
           },

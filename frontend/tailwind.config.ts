@@ -338,6 +338,11 @@ const config: Config = {
       },
     },
   },
+  variants: {
+    extend: {
+      backgroundColor: ['even','odd'],
+    }
+  },
   plugins: [],
 };
 export default config;
