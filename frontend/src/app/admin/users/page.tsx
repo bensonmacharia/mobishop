@@ -8,6 +8,7 @@ import { FiEdit, FiEye } from "react-icons/fi";
 interface User {
   id: number;
   counter: number;
+  uuid: string;
   username: string;
   fname: string;
   lname: string;
@@ -22,10 +23,14 @@ const Users = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [alertType, setAlertType] = useState("");
+  const [isMessageModalVisible, setIsMessageModalVisible] = useState(false);
   const [userName, setUserName] = useState("");
   const [newUser, setNewUser] = useState<User>({
     id: 0,
     counter: 0,
+    uuid: "",
     username: "",
     fname: "",
     lname: "",
@@ -48,15 +53,39 @@ const Users = () => {
     setIsModalOpen(false);
   };
 
+  const isValidEmail = (email: string): boolean => {
+    // Regular expression for basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleAddUser = () => {
     setUserName("");
+    setNewUser({
+      id: 0,
+      counter: 0,
+      uuid: "",
+      username: "",
+      fname: "",
+      lname: "",
+      phone: "",
+      email: "",
+    });
     setIsModalOpen(true);
   };
 
   const handleEditUser = (user: User) => {
     setUserName(user.username);
-    //setNewCategoryName(category.name);
+    setNewUser(user);
     setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsMessageModalVisible(false);
+  };
+
+  const handleReloadUsers = () => {
+    setReloadUsers((prev) => !prev);
   };
 
   useEffect(() => {
@@ -81,6 +110,63 @@ const Users = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isValidEmail(newUser.email)) {
+      try {
+        let url,
+          method = "";
+        if (userName) {
+          url = `${apiUrl}/api/user/${newUser.uuid}`;
+          method = "PUT";
+        } else {
+          url = `${apiUrl}/api/user`;
+          method = "POST";
+        }
+        const response = await fetch(url, {
+          method: method,
+          credentials: "include", // Include cookies in the request
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newUser),
+        });
+        if (response.ok) {
+          // Close the modal and fetch the updated users
+          closeModal();
+          setIsMessageModalVisible(true);
+          setMessage(
+            `User ${userName ? userName : newUser.username} has been added/updated.`
+          );
+          setAlertType("normal");
+          const json = await response.json();
+          handleReloadUsers();
+          setUserName("");
+          setNewUser({
+            id: 0,
+            counter: 0,
+            uuid: "",
+            username: "",
+            fname: "",
+            lname: "",
+            phone: "",
+            email: "",
+          });
+        } else {
+          console.error("Failed to add/update category");
+          closeModal();
+          setIsMessageModalVisible(true);
+          setMessage(
+            `Failed to add/update ${userName ? userName : newUser.username} user`
+          );
+          setAlertType("error");
+        }
+      } catch (error) {
+        console.error("Failed to add/update user:", error);
+        closeModal();
+        setIsMessageModalVisible(true);
+        setMessage(`Failed to add/update user: ${error}`);
+        setAlertType("error");
+      }
+    }
   };
 
   if (!users) {
@@ -204,26 +290,86 @@ const Users = () => {
                 {userName ? `Update ${userName}` : "Add User"}
               </h2>
               <form onSubmit={handleSubmit}>
-                <input
-                  type="text"
-                  placeholder="Username"
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 mb-4"
-                  value={newUser.username}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, username: e.target.value })
-                  }
-                  required
-                />
-                <input
-                  type="text"
-                  placeholder="Email"
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 mb-4"
-                  value={newUser.email}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, username: e.target.value })
-                  }
-                  required
-                />
+                <div className="flex items-center mb-2">
+                  <label htmlFor="username" className="mr-2 w-24 text-left">
+                    Username:
+                  </label>
+                  <input
+                    id="username"
+                    type="text"
+                    placeholder="Username"
+                    className="border border-gray-300 rounded-md px-3 py-2 flex-1"
+                    value={newUser.username}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, username: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+                <div className="flex items-center mb-2">
+                  <label htmlFor="email" className="mr-2 w-24 text-left">
+                    Email:
+                  </label>
+                  <input
+                    id="email"
+                    type="text"
+                    placeholder="Email"
+                    className="border border-gray-300 rounded-md px-3 py-2 flex-1"
+                    value={newUser.email}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, email: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+                <div className="flex items-center mb-2">
+                  <label htmlFor="fname" className="mr-2 w-24 text-left">
+                    First Name:
+                  </label>
+                  <input
+                    id="fname"
+                    type="text"
+                    placeholder="First Name"
+                    className="border border-gray-300 rounded-md px-3 py-2 flex-1"
+                    value={newUser.fname}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, fname: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+                <div className="flex items-center mb-2">
+                  <label htmlFor="lname" className="mr-2 w-24 text-left">
+                    Last Name:
+                  </label>
+                  <input
+                    id="lname"
+                    type="text"
+                    placeholder="Last Name"
+                    className="border border-gray-300 rounded-md px-3 py-2 flex-1"
+                    value={newUser.lname}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, lname: e.target.value })
+                    }
+                    required
+                  />
+                </div>
+                <div className="flex items-center mb-2">
+                  <label htmlFor="phone" className="mr-2 w-24 text-left">
+                    Phone:
+                  </label>
+                  <input
+                    id="phone"
+                    type="text"
+                    placeholder="Phone Number"
+                    className="border border-gray-300 rounded-md px-3 py-2 flex-1"
+                    value={newUser.phone}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, phone: e.target.value })
+                    }
+                    required
+                  />
+                </div>
                 <div className="flex justify-end">
                   <button
                     type="button"
@@ -241,6 +387,15 @@ const Users = () => {
                 </div>
               </form>
             </div>
+          </div>
+        )}
+        {isMessageModalVisible && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <Alert
+              message={message}
+              onClose={handleCloseModal}
+              type={alertType}
+            />
           </div>
         )}
       </AdminLayout>

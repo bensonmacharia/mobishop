@@ -12,9 +12,15 @@ module.exports = function (app) {
 
   app.get("/api/test/all", controller.allAccess);
 
+  app.post(
+    "/api/user/",
+    [authJwt.verifyToken],
+    controller.newUser
+  );
+
   app.get(
     "/api/user/profile",
-    //[authJwt.verifyToken],
+    [authJwt.verifyToken],
     controller.userProfile
   );
 
@@ -22,6 +28,12 @@ module.exports = function (app) {
     "/api/users",
     [authJwt.verifyToken, authJwt.isAdmin],
     controller.listAllUsers
+  );
+
+  app.put(
+    "/api/user/:uuid",
+    [authJwt.verifyToken],
+    controller.updateUser
   );
 
   app.get(
