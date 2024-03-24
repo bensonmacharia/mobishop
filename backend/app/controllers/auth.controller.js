@@ -8,10 +8,13 @@ const Op = db.Sequelize.Op;
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
+const { v4: uuidv4 } = require('uuid');
+
 exports.signup = async (req, res) => {
   // Save User to Database
   try {
     const user = await User.create({
+      uuid: uuidv4(),
       username: req.body.username,
       fname: req.body.fname,
       lname: req.body.lname,
@@ -70,7 +73,7 @@ exports.signin = async (req, res) => {
       authorities.push("ROLE_" + roles[i].name.toUpperCase());
     }
 
-    const token = jwt.sign({ id: user.id, username: user.username, fname: user.fname, lname: user.lname, email: user.email, roles: authorities },
+    const token = jwt.sign({ id: user.id, uuid: user.uuid, username: user.username, fname: user.fname, lname: user.lname, email: user.email, roles: authorities },
       config.secret,
       {
         algorithm: 'HS256',
@@ -82,6 +85,7 @@ exports.signin = async (req, res) => {
 
     return res.status(200).send({
       id: user.id,
+      uuid: user.uuid,
       username: user.username,
       fname: user.fname,
       lname: user.lname,
@@ -98,6 +102,7 @@ exports.signin = async (req, res) => {
 exports.addAdminUser = async (data) => {
   try {
     const user = await User.create({
+      uuid: uuidv4(),
       username: data.username,
       fname: data.fname,
       lname: data.lname,

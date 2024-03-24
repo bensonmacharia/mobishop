@@ -5,6 +5,7 @@ const cookieSession = require("cookie-session");
 require('dotenv').config();
 const bcrypt = require("bcryptjs");
 const controller = require("./app/controllers/auth.controller");
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 
@@ -269,6 +270,7 @@ function initialProducts() {
 
 function initialAdimUser() {
   data = {
+    uuid: uuidv4(),
     username: process.env.ADMIN_USERNAME,
     fname: process.env.ADMIN_FNAME,
     lname: process.env.ADMIN_LNAME,
